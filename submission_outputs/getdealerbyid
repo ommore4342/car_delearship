@@ -1,0 +1,3 @@
+curl -X GET http://localhost:8000/djangoapp/dealer/1
+
+{"status": 200, "dealer": {"id": 1, "city": "Wichita", "state": "Kansas", "zip": "67201", "address": "100 Auto Blvd", "full_name": "Wichita Motors", "phone": "316-555-0101"}}

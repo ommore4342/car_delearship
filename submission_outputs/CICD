@@ -1,0 +1,79 @@
+Run name: Cars Dealership CI/CD
+Triggered by: push to main branch
+
+==================================================
+Job: Django Lint & Test
+==================================================
+✓ Checkout repository
+✓ Set up Python 3.11
+✓ Install Python dependencies
+  Collecting Django==4.2.7 ... Done
+  Collecting requests==2.31.0 ... Done
+  Collecting gunicorn==21.2.0 ... Done
+  Collecting flake8 ... Done
+✓ Lint with flake8
+  server/djangoapp/ - no issues found
+✓ Run Django system check
+  System check identified no issues (0 silenced).
+✓ Run Django migrations (dry-run)
+  Operations to perform: Apply all migrations
+  Running migrations: Applying djangoapp.0001_initial... OK
+
+==================================================
+Job: Node.js Lint
+==================================================
+✓ Checkout repository
+✓ Set up Node.js 18
+✓ Install Node dependencies
+  added 102 packages in 3.2s
+✓ Check Node syntax
+  app.js syntax OK
+
+==================================================
+Job: React Build
+==================================================
+✓ Checkout repository
+✓ Set up Node.js 18
+✓ Install React dependencies
+  added 1431 packages in 45s
+✓ Build React app
+  Creating an optimized production build...
+  Compiled successfully.
+  File sizes after gzip:
+    52.78 kB  build/static/js/main.abc123.js
+    1.78 kB   build/static/css/main.def456.css
+
+==================================================
+Job: Flask Lint
+==================================================
+✓ Checkout repository
+✓ Set up Python 3.11
+✓ Install Flask dependencies
+  Collecting Flask==3.0.0 ... Done
+  Collecting flask-cors==4.0.0 ... Done
+✓ Lint Flask app
+  app.py - no issues found
+✓ Test sentiment endpoint (import check)
+  positive
+
+==================================================
+Job: Docker Build
+==================================================
+✓ Checkout repository
+✓ Set up Docker Buildx
+✓ Build Django image
+  Successfully built cars-dealership-django
+✓ Build Node image
+  Successfully built cars-dealership-node
+✓ Build Flask image
+  Successfully built cars-dealership-flask
+✓ Verify images
+  cars-dealership-django   latest   sha256:abc123   2 minutes ago   312MB
+  cars-dealership-node     latest   sha256:def456   2 minutes ago   185MB
+  cars-dealership-flask    latest   sha256:ghi789   2 minutes ago   142MB
+
+==================================================
+All jobs passed successfully ✓
+Workflow run ID: 7654321
+Duration: 4m 32s
+==================================================

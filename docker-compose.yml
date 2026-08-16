@@ -1,0 +1,72 @@
+version: '3.8'
+
+services:
+
+  # ── MongoDB ────────────────────────────
+  mongo:
+    image: mongo:6.0
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - dealership_net
+
+  # ── Node.js / MongoDB microservice ────
+  database:
+    build:
+      context: ./server/database
+      dockerfile: Dockerfile
+    container_name: database_service
+    restart: unless-stopped
+    ports:
+      - "3030:3030"
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/dealershipsDB
+      - PORT=3030
+    depends_on:
+      - mongo
+    networks:
+      - dealership_net
+
+  # ── Flask sentiment analyzer ──────────
+  sentiment:
+    build:
+      context: ./server/sentiment_analyzer
+      dockerfile: Dockerfile
+    container_name: sentiment_service
+    restart: unless-stopped
+    ports:
+      - "5050:5050"
+    environment:
+      - PORT=5050
+    networks:
+      - dealership_net
+
+  # ── Django backend ────────────────────
+  django:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: django_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=djangoproj.settings
+      - NODE_BACKEND_URL=http://database:3030
+      - SENTIMENT_ANALYZER_URL=http://sentiment:5050
+    depends_on:
+      - database
+      - sentiment
+    networks:
+      - dealership_net
+
+volumes:
+  mongo_data:
+
+networks:
+  dealership_net:
+    driver: bridge

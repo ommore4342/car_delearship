@@ -1,0 +1,110 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cars-dealership-django
+  labels:
+    app: cars-dealership-django
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cars-dealership-django
+  template:
+    metadata:
+      labels:
+        app: cars-dealership-django
+    spec:
+      containers:
+        - name: django
+          image: cars-dealership-django:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: NODE_BACKEND_URL
+              value: "http://database-service:3030"
+            - name: SENTIMENT_ANALYZER_URL
+              value: "http://sentiment-service:5050"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-service
+spec:
+  selector:
+    app: cars-dealership-django
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8000
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cars-dealership-node
+  labels:
+    app: cars-dealership-node
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cars-dealership-node
+  template:
+    metadata:
+      labels:
+        app: cars-dealership-node
+    spec:
+      containers:
+        - name: node
+          image: cars-dealership-node:latest
+          ports:
+            - containerPort: 3030
+          env:
+            - name: MONGO_URI
+              value: "mongodb://mongo-service:27017/dealershipsDB"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-service
+spec:
+  selector:
+    app: cars-dealership-node
+  ports:
+    - protocol: TCP
+      port: 3030
+      targetPort: 3030
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cars-dealership-flask
+  labels:
+    app: cars-dealership-flask
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cars-dealership-flask
+  template:
+    metadata:
+      labels:
+        app: cars-dealership-flask
+    spec:
+      containers:
+        - name: flask
+          image: cars-dealership-flask:latest
+          ports:
+            - containerPort: 5050
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentiment-service
+spec:
+  selector:
+    app: cars-dealership-flask
+  ports:
+    - protocol: TCP
+      port: 5050
+      targetPort: 5050

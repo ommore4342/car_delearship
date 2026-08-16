@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: cars-dealership
+    runtime: python
+    rootDir: server
+    buildCommand: "pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py seed_data && python manage.py collectstatic --noinput"
+    startCommand: "gunicorn djangoproj.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
+    envVars:
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ADMIN_USER
+        value: admin
+      - key: ADMIN_PASS
+        value: Admin1234!
+      - key: ADMIN_EMAIL
+        value: admin@carsdealership.com
+    plan: free

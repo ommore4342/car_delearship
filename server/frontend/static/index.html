@@ -1,697 +1,439 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cars Dealership</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <style>
-    :root { --primary: #1a3c5e; --accent: #e63946; }
-    body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; }
-
-    /* ── Navbar ── */
-    .topnav { background: var(--primary); padding: 0 24px; display: flex; align-items: center; height: 64px; }
-    .topnav .brand { color: #fff; font-weight: 700; font-size: 1.3rem; text-decoration: none; flex: 1; }
-    .topnav .nav-links { display: flex; align-items: center; gap: 8px; }
-    .topnav .nav-links a { color: rgba(255,255,255,.85); text-decoration: none; padding: 6px 12px; border-radius: 6px; font-size: .95rem; }
-    .topnav .nav-links a:hover { color: #fff; background: rgba(255,255,255,.1); }
-    .btn-login    { background: transparent !important; border: 1.5px solid rgba(255,255,255,.6) !important; color: #fff !important; padding: 6px 18px !important; border-radius: 6px !important; cursor: pointer; font-size: .93rem; }
-    .btn-register { background: var(--accent) !important; border: none !important; color: #fff !important; padding: 6px 18px !important; border-radius: 6px !important; cursor: pointer; font-weight: 600; font-size: .93rem; }
-    .btn-logout   { background: #c0303b !important; border: none !important; color: #fff !important; padding: 6px 18px !important; border-radius: 6px !important; cursor: pointer; font-size: .93rem; }
-    #username-display { color: #fff; font-weight: 600; font-size: .95rem; }
-
-    /* ── Modal overlay ── */
-    .modal-overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,.55); z-index: 9999;
-      align-items: center; justify-content: center;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal-box {
-      background: #fff; border-radius: 14px; padding: 38px 36px;
-      width: 100%; max-width: 440px;
-      box-shadow: 0 8px 32px rgba(0,0,0,.2); position: relative;
-    }
-    .modal-box h2 { color: var(--primary); font-weight: 700; margin-bottom: 6px; }
-    .modal-close {
-      position: absolute; top: 14px; right: 18px;
-      background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #aaa; line-height: 1;
-    }
-    .modal-close:hover { color: #333; }
-
-    /* ── Hero ── */
-    .hero { background: linear-gradient(135deg, var(--primary) 0%, #2d6a9f 100%); color: #fff; padding: 80px 24px; text-align: center; }
-    .hero h1 { font-size: 2.8rem; font-weight: 700; }
-    .hero p  { font-size: 1.15rem; opacity: .9; max-width: 560px; margin: 16px auto 0; }
-    .hero .hero-btn { display: inline-block; margin-top: 28px; background: var(--accent); color: #fff; padding: 13px 32px; border-radius: 8px; text-decoration: none; font-weight: 700; font-size: 1.05rem; }
-
-    /* ── Dealers section ── */
-    #dealers-section { max-width: 1100px; margin: 0 auto; padding: 40px 16px; }
-    #dealers-section h2 { color: var(--primary); font-weight: 700; margin-bottom: 6px; }
-    .state-filter { display: flex; align-items: center; gap: 10px; margin: 16px 0 24px; flex-wrap: wrap; }
-    .state-filter label { font-weight: 600; color: var(--primary); }
-    .state-filter select { padding: 8px 14px; border-radius: 8px; border: 1px solid #ccc; font-size: .95rem; cursor: pointer; }
-    .dealer-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 18px; }
-    .dealer-card {
-      background: #fff; border-radius: 12px; padding: 20px;
-      box-shadow: 0 2px 14px rgba(0,0,0,.08);
-      transition: transform .2s, box-shadow .2s;
-    }
-    .dealer-card:hover { transform: translateY(-4px); box-shadow: 0 6px 20px rgba(0,0,0,.13); }
-    .dealer-card h4 { color: var(--primary); font-weight: 700; font-size: 1rem; margin-bottom: 6px; }
-    .dealer-card p  { color: #666; font-size: .87rem; margin: 3px 0; }
-    .dealer-card .actions { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn-view   { background: var(--primary); color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-size: .85rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
-    .btn-review { background: var(--accent);  color: #fff; border: none; padding: 6px 16px; border-radius: 6px; font-size: .85rem; font-weight: 600; cursor: pointer; }
-
-    /* ── Features ── */
-    .features { padding: 60px 24px; max-width: 1100px; margin: 0 auto; }
-    .features h2 { text-align: center; color: var(--primary); font-weight: 700; margin-bottom: 40px; }
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
-    .feat-card { background: #fff; border-radius: 12px; padding: 28px 22px; box-shadow: 0 2px 14px rgba(0,0,0,.08); text-align: center; }
-    .feat-card .icon { font-size: 2.4rem; margin-bottom: 14px; }
-    .feat-card h4 { color: var(--primary); font-weight: 700; }
-    .feat-card p  { color: #666; font-size: .9rem; }
-
-    footer { background: #111; color: #aaa; text-align: center; padding: 18px; font-size: .9rem; margin-top: 60px; }
-
-    /* ── Dealer detail page ── */
-    #dealer-detail { max-width: 900px; margin: 0 auto; padding: 40px 16px; display: none; }
-    .review-card { background: #fff; border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; box-shadow: 0 1px 8px rgba(0,0,0,.07); }
-    .review-card .rev-header { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
-    .review-card .rev-name { font-weight: 700; color: var(--primary); }
-    .badge-pos { background: #28a745; color: #fff; border-radius: 20px; padding: 2px 12px; font-size: .78rem; font-weight: 600; }
-    .badge-neg { background: #dc3545; color: #fff; border-radius: 20px; padding: 2px 12px; font-size: .78rem; font-weight: 600; }
-    .badge-neu { background: #ffc107; color: #333; border-radius: 20px; padding: 2px 12px; font-size: .78rem; font-weight: 600; }
-
-    /* ── Post Review page ── */
-    #post-review { max-width: 680px; margin: 0 auto; padding: 40px 16px; display: none; }
-  </style>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cars Dealership</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+<style>
+:root{--primary:#1a3c5e;--accent:#e63946;}
+body{font-family:'Segoe UI',sans-serif;background:#f0f2f5;margin:0;}
+/* NAV */
+.topnav{background:var(--primary);padding:0 20px;display:flex;align-items:center;height:62px;position:sticky;top:0;z-index:100;}
+.topnav .brand{color:#fff;font-weight:700;font-size:1.25rem;text-decoration:none;flex:1;}
+.topnav .nav-links{display:flex;align-items:center;gap:6px;}
+.topnav .nav-links a{color:rgba(255,255,255,.85);text-decoration:none;padding:6px 10px;border-radius:5px;font-size:.93rem;}
+.topnav .nav-links a:hover{color:#fff;background:rgba(255,255,255,.1);}
+.btn-nav{padding:6px 16px!important;border-radius:6px!important;font-size:.9rem!important;cursor:pointer!important;border:none!important;}
+.btn-login{background:transparent!important;border:1.5px solid rgba(255,255,255,.6)!important;color:#fff!important;}
+.btn-register{background:var(--accent)!important;color:#fff!important;font-weight:600!important;}
+.btn-logout{background:#c0303b!important;color:#fff!important;}
+#nav-username{color:#fff;font-weight:600;font-size:.93rem;display:none;}
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;align-items:center;justify-content:center;}
+.overlay.show{display:flex;}
+.mbox{background:#fff;border-radius:14px;padding:36px 32px;width:100%;max-width:430px;box-shadow:0 8px 32px rgba(0,0,0,.2);position:relative;}
+.mbox h2{color:var(--primary);font-weight:700;margin-bottom:6px;}
+.mclose{position:absolute;top:12px;right:16px;background:none;border:none;font-size:1.5rem;cursor:pointer;color:#aaa;line-height:1;}
+/* HERO */
+.hero{background:linear-gradient(135deg,var(--primary),#2d6a9f);color:#fff;padding:70px 20px;text-align:center;}
+.hero h1{font-size:2.6rem;font-weight:700;}
+.hero p{font-size:1.1rem;opacity:.9;max-width:540px;margin:14px auto 0;}
+.hero-btn{display:inline-block;margin-top:24px;background:var(--accent);color:#fff;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:700;font-size:1rem;}
+/* DEALERS */
+#dealers-wrap{max-width:1100px;margin:0 auto;padding:36px 16px;}
+#dealers-wrap h2{color:var(--primary);font-weight:700;margin-bottom:4px;}
+.filter-bar{display:flex;align-items:center;gap:10px;margin:14px 0 22px;flex-wrap:wrap;}
+.filter-bar label{font-weight:600;color:var(--primary);}
+.filter-bar select{padding:7px 14px;border-radius:7px;border:1px solid #ccc;font-size:.93rem;cursor:pointer;}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;}
+.dcard{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 12px rgba(0,0,0,.08);transition:transform .2s,box-shadow .2s;}
+.dcard:hover{transform:translateY(-4px);box-shadow:0 6px 20px rgba(0,0,0,.13);}
+.dcard h4{color:var(--primary);font-weight:700;font-size:1rem;margin-bottom:6px;}
+.dcard p{color:#666;font-size:.86rem;margin:2px 0;}
+.dcard .acts{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;}
+.btn-view{background:var(--primary);color:#fff;border:none;padding:6px 15px;border-radius:6px;font-size:.84rem;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block;}
+.btn-rev{background:var(--accent);color:#fff;border:none;padding:6px 15px;border-radius:6px;font-size:.84rem;font-weight:600;cursor:pointer;}
+/* DEALER DETAIL */
+#pg-dealer{display:none;max-width:900px;margin:0 auto;padding:36px 16px;}
+.rev-card{background:#fff;border-radius:10px;padding:18px;margin-bottom:12px;box-shadow:0 1px 8px rgba(0,0,0,.07);}
+/* POST REVIEW */
+#pg-review{display:none;max-width:680px;margin:0 auto;padding:36px 16px;}
+/* FEATURES */
+.features{padding:50px 20px;max-width:1100px;margin:0 auto;}
+.features h2{text-align:center;color:var(--primary);font-weight:700;margin-bottom:36px;}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px;}
+.fcard{background:#fff;border-radius:12px;padding:26px 20px;box-shadow:0 2px 12px rgba(0,0,0,.08);text-align:center;}
+.fcard .ico{font-size:2.2rem;margin-bottom:12px;}
+.fcard h4{color:var(--primary);font-weight:700;}
+.fcard p{color:#666;font-size:.88rem;}
+footer{background:#111;color:#aaa;text-align:center;padding:16px;font-size:.88rem;margin-top:50px;}
+</style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════
-     NAVBAR
-══════════════════════════════════════ -->
+<!-- NAV -->
 <nav class="topnav">
-  <a class="brand" href="#" onclick="showPage('home')">🚗 Cars Dealership</a>
+  <a class="brand" href="#" onclick="showHome();return false;">🚗 Cars Dealership</a>
   <div class="nav-links">
     <a href="/static/About.html">About</a>
     <a href="/static/Contact.html">Contact</a>
-    <span id="username-display" style="display:none"></span>
-    <button class="btn-login"    id="btn-show-login"    onclick="openModal('loginModal')">Login</button>
-    <button class="btn-register" id="btn-show-register" onclick="openModal('registerModal')">Register</button>
-    <button class="btn-logout"   id="btn-logout"        onclick="doLogout()" style="display:none">Logout</button>
+    <span id="nav-username"></span>
+    <button class="btn-nav btn-login"    id="btnLogin"    onclick="openM('mLogin')">Login</button>
+    <button class="btn-nav btn-register" id="btnRegister" onclick="openM('mRegister')">Register</button>
+    <button class="btn-nav btn-logout"   id="btnLogout"   style="display:none" onclick="doLogout()">Logout</button>
   </div>
 </nav>
 
-
-<!-- ══════════════════════════════════════
-     LOGIN MODAL
-══════════════════════════════════════ -->
-<div class="modal-overlay" id="loginModal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('loginModal')">&times;</button>
+<!-- LOGIN MODAL -->
+<div class="overlay" id="mLogin">
+  <div class="mbox">
+    <button class="mclose" onclick="closeM('mLogin')">&times;</button>
     <h2>Sign In</h2>
-    <p style="color:#666;font-size:.93rem;margin-bottom:20px;">Welcome back! Enter your credentials to continue.</p>
-    <div id="login-error" class="alert alert-danger py-2" style="display:none"></div>
+    <p style="color:#666;font-size:.9rem;margin-bottom:18px;">Enter your credentials to continue.</p>
+    <div id="loginErr" class="alert alert-danger py-2" style="display:none"></div>
     <form onsubmit="doLogin(event)">
       <div class="mb-3">
         <label class="form-label fw-semibold">Username</label>
-        <input type="text" id="login-username" class="form-control" placeholder="Your username" required />
+        <input type="text" id="lUser" class="form-control" placeholder="Username" required/>
       </div>
-      <div class="mb-4">
+      <div class="mb-3">
         <label class="form-label fw-semibold">Password</label>
-        <input type="password" id="login-password" class="form-control" placeholder="Your password" required />
+        <input type="password" id="lPass" class="form-control" placeholder="Password" required/>
       </div>
-      <button type="submit" class="btn w-100" style="background:var(--primary);color:#fff;font-weight:600;padding:10px;border-radius:8px;">
-        Sign In
-      </button>
+      <button type="submit" class="btn w-100" style="background:var(--primary);color:#fff;font-weight:600;padding:10px;border-radius:8px;">Sign In</button>
     </form>
-    <p style="text-align:center;margin-top:14px;font-size:.88rem;color:#888;">
-      No account?
-      <a href="#" onclick="closeModal('loginModal');openModal('registerModal')" style="color:var(--primary);font-weight:600;">Register here</a>
-    </p>
+    <p class="text-center mt-3" style="font-size:.87rem;color:#888;">No account? <a href="#" onclick="closeM('mLogin');openM('mRegister')" style="color:var(--primary);font-weight:600;">Register</a></p>
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     REGISTER MODAL
-══════════════════════════════════════ -->
-<div class="modal-overlay" id="registerModal">
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal('registerModal')">&times;</button>
+<!-- REGISTER MODAL -->
+<div class="overlay" id="mRegister">
+  <div class="mbox">
+    <button class="mclose" onclick="closeM('mRegister')">&times;</button>
     <h2>Create Account</h2>
-    <p style="color:#666;font-size:.93rem;margin-bottom:20px;">Sign up to leave reviews and access exclusive features.</p>
-    <div id="register-error"   class="alert alert-danger  py-2" style="display:none"></div>
-    <div id="register-success" class="alert alert-success py-2" style="display:none"></div>
+    <p style="color:#666;font-size:.9rem;margin-bottom:18px;">Sign up to leave reviews.</p>
+    <div id="regErr" class="alert alert-danger  py-2" style="display:none"></div>
+    <div id="regOk"  class="alert alert-success py-2" style="display:none"></div>
     <form onsubmit="doRegister(event)">
-      <div class="mb-3">
+      <div class="mb-2">
         <label class="form-label fw-semibold">Username <span class="text-danger">*</span></label>
-        <input type="text" id="reg-username" class="form-control" placeholder="e.g. johndoe92" required />
+        <input type="text" id="rUser" class="form-control" placeholder="Username" required/>
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <label class="form-label fw-semibold">First Name <span class="text-danger">*</span></label>
-        <input type="text" id="reg-firstname" class="form-control" placeholder="John" required />
+        <input type="text" id="rFirst" class="form-control" placeholder="First Name" required/>
       </div>
-      <div class="mb-3">
+      <div class="mb-2">
         <label class="form-label fw-semibold">Last Name <span class="text-danger">*</span></label>
-        <input type="text" id="reg-lastname" class="form-control" placeholder="Doe" required />
+        <input type="text" id="rLast" class="form-control" placeholder="Last Name" required/>
+      </div>
+      <div class="mb-2">
+        <label class="form-label fw-semibold">Email <span class="text-danger">*</span></label>
+        <input type="email" id="rEmail" class="form-control" placeholder="Email" required/>
       </div>
       <div class="mb-3">
-        <label class="form-label fw-semibold">Email Address <span class="text-danger">*</span></label>
-        <input type="email" id="reg-email" class="form-control" placeholder="john@example.com" required />
-      </div>
-      <div class="mb-4">
         <label class="form-label fw-semibold">Password <span class="text-danger">*</span></label>
-        <input type="password" id="reg-password" class="form-control" placeholder="Min. 8 characters" required minlength="8" />
+        <input type="password" id="rPass" class="form-control" placeholder="Min 8 characters" required minlength="8"/>
       </div>
-      <button type="submit" class="btn w-100" style="background:var(--accent);color:#fff;font-weight:600;padding:10px;border-radius:8px;">
-        Register
-      </button>
+      <button type="submit" class="btn w-100" style="background:var(--accent);color:#fff;font-weight:600;padding:10px;border-radius:8px;">Register</button>
     </form>
   </div>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     HOME PAGE
-══════════════════════════════════════ -->
-<div id="page-home">
-  <!-- Hero -->
+<!-- HOME PAGE -->
+<div id="pg-home">
   <section class="hero">
     <h1>Find Your Perfect Car</h1>
     <p>Explore our nationwide network of trusted dealerships. Browse, review, and connect with top car sellers near you.</p>
-    <a class="hero-btn" href="#dealers-section" onclick="document.getElementById('dealers-section').scrollIntoView({behavior:'smooth'}); return false;">
-      Browse Dealerships →
-    </a>
+    <a class="hero-btn" href="#dealers-wrap" onclick="document.getElementById('dealers-wrap').scrollIntoView({behavior:'smooth'});return false;">Browse Dealerships →</a>
   </section>
 
-  <!-- Dealers list -->
-  <section id="dealers-section">
+  <div id="dealers-wrap">
     <h2>Our Dealerships</h2>
-    <p id="dealers-count" style="color:#888;margin-bottom:8px;"></p>
-
-    <div class="state-filter">
-      <label for="state-select">Filter by State:</label>
-      <select id="state-select" onchange="filterByState(this.value)">
+    <p id="dcount" style="color:#888;margin-bottom:8px;"></p>
+    <div class="filter-bar">
+      <label for="stateSelect">Filter by State:</label>
+      <select id="stateSelect" onchange="filterState(this.value)">
         <option value="All">All States</option>
-        <option>Alabama</option><option>Alaska</option><option>Arizona</option>
-        <option>Arkansas</option><option>California</option><option>Colorado</option>
-        <option>Connecticut</option><option>Delaware</option><option>Florida</option>
-        <option>Georgia</option><option>Hawaii</option><option>Idaho</option>
-        <option>Illinois</option><option>Indiana</option><option>Iowa</option>
-        <option>Kansas</option><option>Kentucky</option><option>Louisiana</option>
-        <option>Maine</option><option>Maryland</option><option>Massachusetts</option>
-        <option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
-        <option>Missouri</option><option>Montana</option><option>Nebraska</option>
-        <option>Nevada</option><option>New Hampshire</option><option>New Jersey</option>
-        <option>New Mexico</option><option>New York</option><option>North Carolina</option>
-        <option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
-        <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option>
-        <option>South Carolina</option><option>South Dakota</option><option>Tennessee</option>
-        <option>Texas</option><option>Utah</option><option>Vermont</option>
-        <option>Virginia</option><option>Washington</option><option>West Virginia</option>
+        <option>Alabama</option><option>Alaska</option><option>Arizona</option><option>Arkansas</option>
+        <option>California</option><option>Colorado</option><option>Connecticut</option><option>Delaware</option>
+        <option>Florida</option><option>Georgia</option><option>Hawaii</option><option>Idaho</option>
+        <option>Illinois</option><option>Indiana</option><option>Iowa</option><option>Kansas</option>
+        <option>Kentucky</option><option>Louisiana</option><option>Maine</option><option>Maryland</option>
+        <option>Massachusetts</option><option>Michigan</option><option>Minnesota</option><option>Mississippi</option>
+        <option>Missouri</option><option>Montana</option><option>Nebraska</option><option>Nevada</option>
+        <option>New Hampshire</option><option>New Jersey</option><option>New Mexico</option><option>New York</option>
+        <option>North Carolina</option><option>North Dakota</option><option>Ohio</option><option>Oklahoma</option>
+        <option>Oregon</option><option>Pennsylvania</option><option>Rhode Island</option><option>South Carolina</option>
+        <option>South Dakota</option><option>Tennessee</option><option>Texas</option><option>Utah</option>
+        <option>Vermont</option><option>Virginia</option><option>Washington</option><option>West Virginia</option>
         <option>Wisconsin</option><option>Wyoming</option>
       </select>
     </div>
+    <div id="dErr" class="alert alert-warning" style="display:none"></div>
+    <div class="dgrid" id="dgrid"></div>
+  </div>
 
-    <div id="dealers-loading" style="text-align:center;padding:40px;color:#888;">
-      <div class="spinner-border text-primary" role="status"></div>
-      <p class="mt-2">Loading dealerships…</p>
-    </div>
-    <div id="dealers-error" class="alert alert-danger" style="display:none"></div>
-    <div class="dealer-grid" id="dealer-grid"></div>
-  </section>
-
-  <!-- Features -->
   <section class="features">
     <h2>Why Cars Dealership?</h2>
-    <div class="card-grid">
-      <div class="feat-card"><div class="icon">🏪</div><h4>200+ Locations</h4><p>Dealerships across all 50 states.</p></div>
-      <div class="feat-card"><div class="icon">⭐</div><h4>Verified Reviews</h4><p>AI-powered sentiment analysis for authenticity.</p></div>
-      <div class="feat-card"><div class="icon">🔍</div><h4>Easy Search</h4><p>Filter by state, make, and model.</p></div>
-      <div class="feat-card"><div class="icon">🛡️</div><h4>Trusted Platform</h4><p>Secure accounts and transparent dealer info.</p></div>
+    <div class="fgrid">
+      <div class="fcard"><div class="ico">🏪</div><h4>200+ Locations</h4><p>Dealerships across all 50 states.</p></div>
+      <div class="fcard"><div class="ico">⭐</div><h4>Verified Reviews</h4><p>AI sentiment analysis on every review.</p></div>
+      <div class="fcard"><div class="ico">🔍</div><h4>Easy Search</h4><p>Filter dealers by state instantly.</p></div>
+      <div class="fcard"><div class="ico">🛡️</div><h4>Trusted Platform</h4><p>Secure accounts and transparent info.</p></div>
     </div>
   </section>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     DEALER DETAIL PAGE
-══════════════════════════════════════ -->
-<div id="dealer-detail">
-  <a href="#" onclick="showPage('home')" style="color:var(--primary);font-weight:600;">← Back to Dealers</a>
-  <div id="dealer-info" style="background:#fff;border-radius:14px;padding:26px;box-shadow:0 2px 16px rgba(0,0,0,.08);margin:20px 0 28px;"></div>
-  <h3 style="color:var(--primary);font-weight:700;margin-bottom:16px;" id="reviews-heading">Customer Reviews</h3>
-  <div id="reviews-loading" style="text-align:center;padding:30px;color:#888;display:none">
-    <div class="spinner-border text-primary" role="status"></div><p class="mt-2">Loading reviews…</p>
-  </div>
-  <div id="reviews-container"></div>
+<!-- DEALER DETAIL PAGE -->
+<div id="pg-dealer">
+  <a href="#" onclick="showHome();return false;" style="color:var(--primary);font-weight:600;">← Back to Dealers</a>
+  <div id="dealerInfo" style="background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 14px rgba(0,0,0,.09);margin:18px 0 26px;"></div>
+  <h3 id="revHead" style="color:var(--primary);font-weight:700;margin-bottom:14px;">Customer Reviews</h3>
+  <div id="revList"></div>
 </div>
 
-
-<!-- ══════════════════════════════════════
-     POST REVIEW PAGE
-══════════════════════════════════════ -->
-<div id="post-review">
-  <a href="#" id="back-to-dealer" style="color:var(--primary);font-weight:600;">← Back to Dealer</a>
-  <h1 style="color:var(--primary);font-weight:700;margin:16px 0 4px;">Write a Review</h1>
-  <p id="review-dealer-name" style="color:#666;margin-bottom:24px;"></p>
-  <div id="review-error" class="alert alert-danger" style="display:none"></div>
-  <div id="review-success" style="text-align:center;display:none;padding:40px;">
-    <div style="font-size:3rem">🎉</div>
+<!-- POST REVIEW PAGE -->
+<div id="pg-review">
+  <a href="#" id="backFromReview" style="color:var(--primary);font-weight:600;">← Back</a>
+  <h1 style="color:var(--primary);font-weight:700;margin:14px 0 4px;">Write a Review</h1>
+  <p id="revDealerName" style="color:#666;margin-bottom:22px;"></p>
+  <div id="revErr" class="alert alert-danger" style="display:none"></div>
+  <div id="revSuccess" style="display:none;text-align:center;padding:50px;">
+    <div style="font-size:3rem;">🎉</div>
     <h3 style="color:#28a745;font-weight:700;">Review Submitted!</h3>
-    <p style="color:#666;">Thank you for sharing your experience.</p>
-    <button onclick="showPage('home')" class="btn mt-3" style="background:var(--primary);color:#fff;border-radius:8px;padding:10px 24px;font-weight:600;">Back to Home</button>
+    <p style="color:#666;">Thank you for your feedback.</p>
+    <button onclick="showHome()" class="btn mt-3" style="background:var(--primary);color:#fff;padding:10px 24px;border-radius:8px;font-weight:600;">Back to Home</button>
   </div>
-  <form id="review-form" onsubmit="submitReview(event)" style="background:#fff;border-radius:14px;padding:28px;box-shadow:0 2px 16px rgba(0,0,0,.09);">
+  <form id="revForm" onsubmit="submitReview(event)" style="background:#fff;border-radius:14px;padding:26px;box-shadow:0 2px 14px rgba(0,0,0,.09);">
     <div class="mb-3">
       <label class="form-label fw-semibold">Your Review <span class="text-danger">*</span></label>
-      <textarea id="rev-text" class="form-control" rows="5" placeholder="Share your experience…" required></textarea>
+      <textarea id="rvText" class="form-control" rows="5" placeholder="Share your experience…" required></textarea>
     </div>
     <div class="mb-3 form-check">
-      <input type="checkbox" class="form-check-input" id="rev-purchase" />
-      <label class="form-check-label fw-semibold" for="rev-purchase">I purchased a vehicle at this dealership</label>
+      <input type="checkbox" class="form-check-input" id="rvPurchase" onchange="document.getElementById('rvDateRow').style.display=this.checked?'block':'none'"/>
+      <label class="form-check-label fw-semibold" for="rvPurchase">I purchased a vehicle here</label>
     </div>
-    <div class="mb-3" id="date-row" style="display:none">
+    <div class="mb-3" id="rvDateRow" style="display:none;">
       <label class="form-label fw-semibold">Purchase Date</label>
-      <input type="date" id="rev-date" class="form-control" />
+      <input type="date" id="rvDate" class="form-control"/>
     </div>
     <div class="row">
       <div class="col-md-4 mb-3">
         <label class="form-label fw-semibold">Car Make</label>
-        <select id="rev-make" class="form-select"><option value="">-- Select --</option></select>
+        <select id="rvMake" class="form-select"><option value="">-- Select --</option></select>
       </div>
       <div class="col-md-4 mb-3">
         <label class="form-label fw-semibold">Car Model</label>
-        <input type="text" id="rev-model" class="form-control" placeholder="e.g. Camry" />
+        <input type="text" id="rvModel" class="form-control" placeholder="e.g. Camry"/>
       </div>
       <div class="col-md-4 mb-3">
         <label class="form-label fw-semibold">Car Year</label>
-        <select id="rev-year" class="form-select"></select>
+        <select id="rvYear" class="form-select"></select>
       </div>
     </div>
-    <div style="display:flex;gap:12px;margin-top:8px;">
-      <button type="submit" style="background:var(--accent);border:none;color:#fff;padding:11px 28px;border-radius:8px;font-weight:700;font-size:1rem;cursor:pointer;">Submit Review</button>
-      <button type="button" onclick="showPage('home')" style="background:none;border:none;color:var(--primary);font-weight:600;cursor:pointer;padding:11px;">Cancel</button>
+    <div class="d-flex gap-3 mt-2">
+      <button type="submit" style="background:var(--accent);border:none;color:#fff;padding:10px 26px;border-radius:8px;font-weight:700;font-size:.97rem;cursor:pointer;">Submit Review</button>
+      <button type="button" onclick="showHome()" style="background:none;border:none;color:var(--primary);font-weight:600;cursor:pointer;">Cancel</button>
     </div>
   </form>
 </div>
 
-
-<footer>
-  <p>&copy; 2024 Cars Dealership. All rights reserved.</p>
-</footer>
+<footer><p>&copy; 2024 Cars Dealership. All rights reserved.</p></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// ════════════════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════════════════
-let currentUser    = null;
-let currentDealerId = null;
+// ── State ──────────────────────────────────────────────────
+var currentUser     = window._CURRENT_USER || '';
+var currentDealerId = null;
 
-// ════════════════════════════════════════════════════════════
-//  MODAL HELPERS
-// ════════════════════════════════════════════════════════════
-function openModal(id)  { document.getElementById(id).classList.add('active'); }
-function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+// ── Restore login state from server-injected variable ─────
+if (currentUser) setLoggedIn(currentUser);
 
-// Close modal on backdrop click
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('active'); });
+// ── Modal helpers ──────────────────────────────────────────
+function openM(id)  { document.getElementById(id).classList.add('show'); }
+function closeM(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.overlay').forEach(function(el){
+  el.addEventListener('click', function(e){ if(e.target===el) el.classList.remove('show'); });
 });
 
-// ════════════════════════════════════════════════════════════
-//  PAGE NAVIGATION  (SPA without React)
-// ════════════════════════════════════════════════════════════
-function showPage(page, id) {
-  document.getElementById('page-home').style.display     = 'none';
-  document.getElementById('dealer-detail').style.display = 'none';
-  document.getElementById('post-review').style.display   = 'none';
-
-  if (page === 'home') {
-    document.getElementById('page-home').style.display = 'block';
-  } else if (page === 'dealer') {
-    document.getElementById('dealer-detail').style.display = 'block';
-    loadDealerDetail(id);
-  } else if (page === 'review') {
-    if (!currentUser) { openModal('loginModal'); return; }
-    document.getElementById('post-review').style.display = 'block';
-    loadReviewPage(id);
-  }
-}
-
-// ════════════════════════════════════════════════════════════
-//  AUTH
-// ════════════════════════════════════════════════════════════
-function setUser(username) {
+// ── Auth UI ────────────────────────────────────────────────
+function setLoggedIn(username){
   currentUser = username;
-  document.getElementById('username-display').textContent = '👤 ' + username;
-  document.getElementById('username-display').style.display   = 'inline';
-  document.getElementById('btn-show-login').style.display    = 'none';
-  document.getElementById('btn-show-register').style.display = 'none';
-  document.getElementById('btn-logout').style.display        = 'inline-block';
-  // Re-render dealers to show Review button
-  renderDealers(window._lastDealers || []);
+  document.getElementById('nav-username').textContent = '👤 ' + username;
+  document.getElementById('nav-username').style.display = 'inline';
+  document.getElementById('btnLogin').style.display    = 'none';
+  document.getElementById('btnRegister').style.display = 'none';
+  document.getElementById('btnLogout').style.display   = 'inline-block';
+  renderDealers(window._allDealers || []);
+}
+function setLoggedOut(){
+  currentUser = '';
+  document.getElementById('nav-username').style.display = 'none';
+  document.getElementById('btnLogin').style.display    = 'inline-block';
+  document.getElementById('btnRegister').style.display = 'inline-block';
+  document.getElementById('btnLogout').style.display   = 'none';
+  renderDealers(window._allDealers || []);
 }
 
-function clearUser() {
-  currentUser = null;
-  document.getElementById('username-display').style.display   = 'none';
-  document.getElementById('btn-show-login').style.display    = 'inline-block';
-  document.getElementById('btn-show-register').style.display = 'inline-block';
-  document.getElementById('btn-logout').style.display        = 'none';
-  renderDealers(window._lastDealers || []);
-}
-
-async function doLogin(e) {
+async function doLogin(e){
   e.preventDefault();
-  const errEl = document.getElementById('login-error');
+  var errEl = document.getElementById('loginErr');
   errEl.style.display = 'none';
-
-  const username = document.getElementById('login-username').value.trim();
-  const password = document.getElementById('login-password').value;
-
   try {
-    const res  = await fetch('/djangoapp/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ userName: username, password }),
-    });
-    const data = await res.json();
-    if (data.error) {
-      errEl.textContent = data.error;
-      errEl.style.display = 'block';
-    } else {
-      closeModal('loginModal');
-      setUser(data.userName);
-      document.getElementById('login-username').value = '';
-      document.getElementById('login-password').value = '';
-    }
-  } catch (err) {
-    errEl.textContent = 'Network error. Is the Django server running?';
-    errEl.style.display = 'block';
-  }
+    var r = await fetch('/djangoapp/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:document.getElementById('lUser').value,password:document.getElementById('lPass').value})});
+    var d = await r.json();
+    if(d.error){ errEl.textContent=d.error; errEl.style.display='block'; }
+    else { closeM('mLogin'); setLoggedIn(d.userName); document.getElementById('lUser').value=''; document.getElementById('lPass').value=''; }
+  } catch(err){ errEl.textContent='Network error. Is the server running?'; errEl.style.display='block'; }
 }
 
-async function doRegister(e) {
+async function doRegister(e){
   e.preventDefault();
-  const errEl = document.getElementById('register-error');
-  const sucEl = document.getElementById('register-success');
-  errEl.style.display = 'none';
-  sucEl.style.display = 'none';
-
-  const payload = {
-    userName:  document.getElementById('reg-username').value.trim(),
-    firstName: document.getElementById('reg-firstname').value.trim(),
-    lastName:  document.getElementById('reg-lastname').value.trim(),
-    email:     document.getElementById('reg-email').value.trim(),
-    password:  document.getElementById('reg-password').value,
-  };
-
+  var errEl=document.getElementById('regErr'), okEl=document.getElementById('regOk');
+  errEl.style.display='none'; okEl.style.display='none';
   try {
-    const res  = await fetch('/djangoapp/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (data.error) {
-      errEl.textContent = data.error;
-      errEl.style.display = 'block';
-    } else {
-      sucEl.textContent = `Welcome, ${data.userName}! Registration successful.`;
-      sucEl.style.display = 'block';
-      setTimeout(() => { closeModal('registerModal'); setUser(data.userName); }, 1500);
-    }
-  } catch (err) {
-    errEl.textContent = 'Network error. Is the Django server running?';
-    errEl.style.display = 'block';
-  }
+    var r = await fetch('/djangoapp/register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userName:document.getElementById('rUser').value,firstName:document.getElementById('rFirst').value,lastName:document.getElementById('rLast').value,email:document.getElementById('rEmail').value,password:document.getElementById('rPass').value})});
+    var d = await r.json();
+    if(d.error){ errEl.textContent=d.error; errEl.style.display='block'; }
+    else { okEl.textContent='Welcome, '+d.userName+'! Registered successfully.'; okEl.style.display='block'; setTimeout(function(){ closeM('mRegister'); setLoggedIn(d.userName); },1200); }
+  } catch(err){ errEl.textContent='Network error.'; errEl.style.display='block'; }
 }
 
-async function doLogout() {
+async function doLogout(){
   await fetch('/djangoapp/logout');
-  clearUser();
+  setLoggedOut();
 }
 
-// ════════════════════════════════════════════════════════════
-//  DEALERS
-// ════════════════════════════════════════════════════════════
-async function loadDealers(state) {
-  const grid    = document.getElementById('dealer-grid');
-  const loading = document.getElementById('dealers-loading');
-  const errEl   = document.getElementById('dealers-error');
-  const count   = document.getElementById('dealers-count');
+// ── Page switching ─────────────────────────────────────────
+function showHome(){
+  document.getElementById('pg-home').style.display   = 'block';
+  document.getElementById('pg-dealer').style.display = 'none';
+  document.getElementById('pg-review').style.display = 'none';
+}
+function showDealer(id){
+  document.getElementById('pg-home').style.display   = 'none';
+  document.getElementById('pg-dealer').style.display = 'block';
+  document.getElementById('pg-review').style.display = 'none';
+  loadDealerDetail(id);
+}
+function showReview(id){
+  if(!currentUser){ openM('mLogin'); return; }
+  document.getElementById('pg-home').style.display   = 'none';
+  document.getElementById('pg-dealer').style.display = 'none';
+  document.getElementById('pg-review').style.display = 'block';
+  loadReviewPage(id);
+}
 
-  grid.innerHTML = '';
-  errEl.style.display = 'none';
-  loading.style.display = 'block';
+// ── Dealers ────────────────────────────────────────────────
+function renderDealers(dealers){
+  var grid = document.getElementById('dgrid');
+  document.getElementById('dcount').textContent = dealers.length + ' dealership' + (dealers.length!==1?'s':'') + ' found';
+  if(!dealers.length){ grid.innerHTML='<p style="color:#999;grid-column:1/-1;text-align:center;padding:40px;">No dealerships found.</p>'; return; }
+  grid.innerHTML = dealers.map(function(d){
+    return '<div class="dcard">'
+      +'<div style="display:flex;justify-content:space-between;align-items:flex-start;">'
+      +'<h4>'+d.full_name+'</h4>'
+      +'<span style="background:#e8f0fe;color:var(--primary);border-radius:20px;padding:2px 10px;font-size:.75rem;font-weight:600;">#'+d.id+'</span>'
+      +'</div>'
+      +'<p>📍 '+d.city+', '+d.state+' '+d.zip+'</p>'
+      +'<p>'+d.address+'</p>'
+      +'<p>📞 '+d.phone+'</p>'
+      +'<div class="acts">'
+      +'<button class="btn-view" onclick="showDealer('+d.id+')">View Details</button>'
+      +(currentUser ? '<button class="btn-rev" onclick="showReview('+d.id+')">Review Dealer</button>' : '')
+      +'</div>'
+      +'</div>';
+  }).join('');
+}
 
-  // ── Use pre-loaded data for initial "All" load (no fetch needed) ──
-  if ((!state || state === 'All') && window._PRELOADED_DEALERS && window._PRELOADED_DEALERS.length) {
-    const dealers = window._PRELOADED_DEALERS;
-    window._lastDealers = dealers;
-    loading.style.display = 'none';
-    count.textContent = `${dealers.length} dealership${dealers.length !== 1 ? 's' : ''} found`;
-    renderDealers(dealers);
-    return;
-  }
-
-  // ── For state filter or fallback, fetch from API ──
-  const url = (state && state !== 'All')
-    ? `/djangoapp/get_dealers/${encodeURIComponent(state)}`
-    : '/djangoapp/get_dealers';
-
+async function filterState(state){
+  var errEl = document.getElementById('dErr');
+  errEl.style.display='none';
+  if(state==='All'){ renderDealers(window._allDealers); return; }
   try {
-    const res  = await fetch(url);
-    const data = await res.json();
-    const dealers = data.dealers || [];
-    window._lastDealers = dealers;
-    loading.style.display = 'none';
-    count.textContent = `${dealers.length} dealership${dealers.length !== 1 ? 's' : ''} found`;
-    renderDealers(dealers);
-  } catch (err) {
-    loading.style.display = 'none';
-    // Last resort: show preloaded data even if filtered fetch fails
-    if (window._PRELOADED_DEALERS && window._PRELOADED_DEALERS.length) {
-      const dealers = window._PRELOADED_DEALERS;
-      window._lastDealers = dealers;
-      count.textContent = `${dealers.length} dealership${dealers.length !== 1 ? 's' : ''} found`;
-      renderDealers(dealers);
-    } else {
-      errEl.textContent = 'Could not load dealers. Please refresh the page.';
-      errEl.style.display = 'block';
-    }
+    var r = await fetch('/djangoapp/get_dealers/'+encodeURIComponent(state));
+    var data = await r.json();
+    renderDealers(data.dealers||[]);
+  } catch(e){
+    var filtered = (window._allDealers||[]).filter(function(d){ return d.state.toLowerCase()===state.toLowerCase(); });
+    renderDealers(filtered);
   }
 }
 
-function renderDealers(dealers) {
-  const grid = document.getElementById('dealer-grid');
-  grid.innerHTML = '';
-
-  if (!dealers.length) {
-    grid.innerHTML = '<p style="color:#999;grid-column:1/-1;text-align:center;padding:40px 0;">No dealerships found.</p>';
-    return;
-  }
-
-  dealers.forEach(d => {
-    const card = document.createElement('div');
-    card.className = 'dealer-card';
-    card.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-        <h4>${d.full_name || d.dealer_name || 'Dealership'}</h4>
-        <span style="background:#e8f0fe;color:var(--primary);border-radius:20px;padding:2px 10px;font-size:.75rem;font-weight:600;">#${d.id}</span>
-      </div>
-      <p>📍 ${d.city}, ${d.state} ${d.zip || ''}</p>
-      <p>${d.address || ''}</p>
-      <p>📞 ${d.phone || 'N/A'}</p>
-      <div class="actions">
-        <a class="btn-view" onclick="showPage('dealer', ${d.id}); return false;" href="#">View Details</a>
-        ${currentUser
-          ? `<button class="btn-review" onclick="showPage('review', ${d.id})">Review Dealer</button>`
-          : ''}
-      </div>`;
-    grid.appendChild(card);
-  });
-}
-
-function filterByState(state) {
-  loadDealers(state);
-}
-
-// ════════════════════════════════════════════════════════════
-//  DEALER DETAIL
-// ════════════════════════════════════════════════════════════
-async function loadDealerDetail(id) {
+// ── Dealer detail ──────────────────────────────────────────
+async function loadDealerDetail(id){
   currentDealerId = id;
-  const infoEl  = document.getElementById('dealer-info');
-  const revCont = document.getElementById('reviews-container');
-  const revLoad = document.getElementById('reviews-loading');
-  const heading = document.getElementById('reviews-heading');
-  document.getElementById('back-to-dealer').onclick = () => showPage('dealer', id);
-
-  infoEl.innerHTML  = '<p style="color:#888">Loading dealer info…</p>';
-  revCont.innerHTML = '';
-  revLoad.style.display = 'block';
-
+  document.getElementById('backFromReview').onclick = function(){ showDealer(id); return false; };
+  document.getElementById('dealerInfo').innerHTML='<p style="color:#888;">Loading…</p>';
+  document.getElementById('revList').innerHTML='';
+  document.getElementById('revHead').textContent='Customer Reviews';
   try {
-    const [dRes, rRes] = await Promise.all([
-      fetch(`/djangoapp/dealer/${id}`),
-      fetch(`/djangoapp/reviews/dealer/${id}`),
-    ]);
-    const dData = await dRes.json();
-    const rData = await rRes.json();
-    const dealer  = dData.dealer  || {};
-    const reviews = rData.reviews || [];
-
-    infoEl.innerHTML = `
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">
-        <div>
-          <h2 style="color:var(--primary);font-weight:700;">${dealer.full_name || dealer.dealer_name || ''}</h2>
-          <p style="color:#555;margin:6px 0;">📍 ${dealer.city}, ${dealer.state} ${dealer.zip || ''}</p>
-          <p style="color:#777;font-size:.9rem;">${dealer.address || ''}</p>
-          <p style="color:#777;font-size:.9rem;">📞 ${dealer.phone || 'N/A'}</p>
-        </div>
-        ${currentUser
-          ? `<button class="btn-review" onclick="showPage('review',${id})" style="align-self:flex-start;padding:10px 22px;font-size:.95rem;">+ Write a Review</button>`
-          : ''}
-      </div>`;
-
-    heading.textContent = `Customer Reviews (${reviews.length})`;
-    revLoad.style.display = 'none';
-
-    if (!reviews.length) {
-      revCont.innerHTML = '<p style="color:#999;text-align:center;padding:30px;">No reviews yet.</p>';
-      return;
-    }
-
-    reviews.forEach(r => {
-      const s    = r.sentiment || 'neutral';
-      const badge = s === 'positive'
-        ? '<span class="badge-pos">positive</span>'
-        : s === 'negative'
-          ? '<span class="badge-neg">negative</span>'
-          : '<span class="badge-neu">neutral</span>';
-
-      const card = document.createElement('div');
-      card.className = 'review-card';
-      card.innerHTML = `
-        <div class="rev-header">
-          <span class="rev-name">${s === 'positive' ? '😊' : s === 'negative' ? '😞' : '😐'} ${r.name || 'Anonymous'}</span>
-          <span style="color:#888;font-size:.82rem;">${r.purchase_date || ''}</span>
-        </div>
-        <p style="color:#333;margin:0 0 10px;line-height:1.6;">${r.review}</p>
-        <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:.8rem;color:#666;align-items:center;">
-          ${r.car_make ? `<span>🚗 ${r.car_make} ${r.car_model} (${r.car_year})</span>` : ''}
-          ${r.purchase ? '<span>✅ Verified Purchase</span>' : ''}
-          ${badge}
-        </div>`;
-      revCont.appendChild(card);
-    });
-  } catch (err) {
-    infoEl.innerHTML = '<p style="color:#c0303b">Failed to load dealer info.</p>';
-    revLoad.style.display = 'none';
+    var dr = await fetch('/djangoapp/dealer/'+id);
+    var rr = await fetch('/djangoapp/reviews/dealer/'+id);
+    var dd = await dr.json();
+    var rd = await rr.json();
+    var dl = dd.dealer||{};
+    var revs = rd.reviews||[];
+    document.getElementById('dealerInfo').innerHTML =
+      '<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;">'
+      +'<div><h2 style="color:var(--primary);font-weight:700;">'+dl.full_name+'</h2>'
+      +'<p style="color:#555;margin:6px 0;">📍 '+dl.city+', '+dl.state+' '+dl.zip+'</p>'
+      +'<p style="color:#777;font-size:.9rem;">'+dl.address+'</p>'
+      +'<p style="color:#777;font-size:.9rem;">📞 '+dl.phone+'</p></div>'
+      +(currentUser?'<button class="btn-rev" onclick="showReview('+id+')" style="align-self:flex-start;padding:9px 20px;font-size:.93rem;">+ Write a Review</button>':'')
+      +'</div>';
+    document.getElementById('revHead').textContent='Customer Reviews ('+revs.length+')';
+    if(!revs.length){ document.getElementById('revList').innerHTML='<p style="color:#999;text-align:center;padding:30px;">No reviews yet. Be the first!</p>'; return; }
+    document.getElementById('revList').innerHTML = revs.map(function(rv){
+      var s=rv.sentiment||'neutral';
+      var badge=s==='positive'?'<span style="background:#28a745;color:#fff;border-radius:20px;padding:2px 10px;font-size:.77rem;font-weight:600;">positive</span>':s==='negative'?'<span style="background:#dc3545;color:#fff;border-radius:20px;padding:2px 10px;font-size:.77rem;font-weight:600;">negative</span>':'<span style="background:#ffc107;color:#333;border-radius:20px;padding:2px 10px;font-size:.77rem;font-weight:600;">neutral</span>';
+      return '<div class="rev-card">'
+        +'<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:8px;">'
+        +'<span style="font-weight:700;color:var(--primary);">'+(s==='positive'?'😊':s==='negative'?'😞':'😐')+' '+(rv.name||'Anonymous')+'</span>'
+        +'<span style="color:#888;font-size:.82rem;">'+(rv.purchase_date||'')+'</span>'
+        +'</div>'
+        +'<p style="color:#333;margin:0 0 10px;line-height:1.6;">'+rv.review+'</p>'
+        +'<div style="display:flex;gap:12px;flex-wrap:wrap;font-size:.8rem;color:#666;align-items:center;">'
+        +(rv.car_make?'<span>🚗 '+rv.car_make+' '+rv.car_model+' ('+rv.car_year+')</span>':'')
+        +(rv.purchase?'<span>✅ Verified Purchase</span>':'')
+        +badge+'</div></div>';
+    }).join('');
+  } catch(e){
+    document.getElementById('dealerInfo').innerHTML='<p style="color:#c0303b;">Failed to load. Check that Django server is running.</p>';
   }
 }
 
-// ════════════════════════════════════════════════════════════
-//  POST REVIEW
-// ════════════════════════════════════════════════════════════
-async function loadReviewPage(id) {
-  currentDealerId = id;
-  document.getElementById('review-success').style.display = 'none';
-  document.getElementById('review-form').style.display    = 'block';
-  document.getElementById('review-error').style.display   = 'none';
-
-  document.getElementById('back-to-dealer').onclick = () => showPage('dealer', id);
-
-  // Load dealer name
+// ── Post review ────────────────────────────────────────────
+async function loadReviewPage(id){
+  currentDealerId=id;
+  document.getElementById('revSuccess').style.display='none';
+  document.getElementById('revForm').style.display='block';
+  document.getElementById('revErr').style.display='none';
   try {
-    const res  = await fetch(`/djangoapp/dealer/${id}`);
-    const data = await res.json();
-    const d    = data.dealer || {};
-    document.getElementById('review-dealer-name').textContent =
-      `for ${d.full_name || d.dealer_name || 'Dealer #' + id} — ${d.city || ''}, ${d.state || ''}`;
-  } catch {}
-
-  // Load car makes
+    var r=await fetch('/djangoapp/dealer/'+id);
+    var d=(await r.json()).dealer||{};
+    document.getElementById('revDealerName').textContent='for '+d.full_name+' — '+d.city+', '+d.state;
+  } catch(e){}
   try {
-    const res  = await fetch('/djangoapp/get_cars');
-    const data = await res.json();
-    const sel  = document.getElementById('rev-make');
-    sel.innerHTML = '<option value="">-- Select --</option>';
-    (data.CarMakes || []).forEach(m => {
-      const opt = document.createElement('option');
-      opt.value = opt.textContent = m.name;
-      sel.appendChild(opt);
-    });
-  } catch {}
-
-  // Populate years
-  const yearSel = document.getElementById('rev-year');
-  yearSel.innerHTML = '';
-  const thisYear = new Date().getFullYear();
-  for (let y = thisYear; y >= thisYear - 29; y--) {
-    const opt = document.createElement('option');
-    opt.value = opt.textContent = y;
-    yearSel.appendChild(opt);
-  }
-
-  // Toggle purchase date
-  document.getElementById('rev-purchase').onchange = function() {
-    document.getElementById('date-row').style.display = this.checked ? 'block' : 'none';
-  };
+    var r2=await fetch('/djangoapp/get_cars');
+    var d2=await r2.json();
+    var sel=document.getElementById('rvMake');
+    sel.innerHTML='<option value="">-- Select --</option>';
+    (d2.CarMakes||[]).forEach(function(m){ var o=document.createElement('option'); o.value=o.textContent=m.name; sel.appendChild(o); });
+  } catch(e){}
+  var yrSel=document.getElementById('rvYear');
+  yrSel.innerHTML='';
+  var y=new Date().getFullYear();
+  for(var i=y;i>=y-29;i--){ var o=document.createElement('option'); o.value=o.textContent=i; yrSel.appendChild(o); }
 }
 
-async function submitReview(e) {
+async function submitReview(e){
   e.preventDefault();
-  const errEl = document.getElementById('review-error');
-  errEl.style.display = 'none';
-
-  const payload = {
-    review: {
-      name:          currentUser,
-      dealership:    currentDealerId,
-      review:        document.getElementById('rev-text').value,
-      purchase:      document.getElementById('rev-purchase').checked,
-      purchase_date: document.getElementById('rev-date').value,
-      car_make:      document.getElementById('rev-make').value,
-      car_model:     document.getElementById('rev-model').value,
-      car_year:      Number(document.getElementById('rev-year').value),
-      id:            Date.now(),
-    },
-  };
-
+  var errEl=document.getElementById('revErr'); errEl.style.display='none';
   try {
-    const res  = await fetch('/djangoapp/add_review', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    const data = await res.json();
-    if (data.status === 200) {
-      document.getElementById('review-form').style.display    = 'none';
-      document.getElementById('review-success').style.display = 'block';
-    } else {
-      errEl.textContent = data.error || 'Failed to submit.';
-      errEl.style.display = 'block';
-    }
-  } catch {
-    errEl.textContent = 'Network error. Please try again.';
-    errEl.style.display = 'block';
-  }
+    var r=await fetch('/djangoapp/add_review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({review:{name:currentUser,dealership:currentDealerId,review:document.getElementById('rvText').value,purchase:document.getElementById('rvPurchase').checked,purchase_date:document.getElementById('rvDate').value,car_make:document.getElementById('rvMake').value,car_model:document.getElementById('rvModel').value,car_year:Number(document.getElementById('rvYear').value),id:Date.now()}})});
+    var d=await r.json();
+    if(d.status===200){ document.getElementById('revForm').style.display='none'; document.getElementById('revSuccess').style.display='block'; }
+    else{ errEl.textContent=d.error||'Failed to submit.'; errEl.style.display='block'; }
+  } catch(e2){ errEl.textContent='Network error.'; errEl.style.display='block'; }
 }
 
-// ════════════════════════════════════════════════════════════
-//  INIT
-// ════════════════════════════════════════════════════════════
-showPage('home');
-loadDealers('All');
+// ── INIT ───────────────────────────────────────────────────
+window._allDealers = window._PRELOADED_DEALERS || [];
+renderDealers(window._allDealers);
+showHome();
 </script>
 </body>
 </html>

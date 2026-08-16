@@ -1,4 +1,4 @@
-import os
+import os, json
 from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
@@ -7,35 +7,27 @@ from django.http import HttpResponse
 
 
 def serve_index(request):
-    """Serve index.html with dealers pre-injected as JSON so the page
-    never shows 0 dealers even before JS runs."""
     from djangoapp.models import Dealer
     from djangoapp.populate import seed_dealers
-    import json
 
-    # Auto-seed on first request
     if Dealer.objects.count() == 0:
         seed_dealers()
 
     dealers = list(Dealer.objects.order_by('state', 'city').values(
         'id', 'full_name', 'city', 'state', 'zip', 'address', 'phone'
     ))
+
+    user = request.user.username if request.user.is_authenticated else ''
     dealers_json = json.dumps(dealers)
 
-    # Read the HTML file
     html_path = os.path.join(settings.BASE_DIR, 'frontend', 'static', 'index.html')
     with open(html_path, 'r', encoding='utf-8') as f:
         html = f.read()
 
-    # Inject pre-loaded dealer data right before </body>
-    inject = f"""
-<script>
-// Pre-loaded dealer data from Django (avoids fetch delay / failures)
-window._PRELOADED_DEALERS = {dealers_json};
-</script>"""
-    html = html.replace('</body>', inject + '\n</body>')
-
-    return HttpResponse(html, content_type='text/html')
+    # Inject data right before closing body tag
+    inject = f'<script>window._PRELOADED_DEALERS={dealers_json};window._CURRENT_USER={json.dumps(user)};</script>'
+    html = html.replace('</body>', inject + '</body>')
+    return HttpResponse(html, content_type='text/html; charset=utf-8')
 
 
 urlpatterns = [

@@ -9,6 +9,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*', 'localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+]
+
+# Allow session cookies over HTTP in development
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE   = False
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

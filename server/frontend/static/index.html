@@ -184,7 +184,7 @@
   <section class="hero">
     <h1>Find Your Perfect Car</h1>
     <p>Explore our nationwide network of trusted dealerships. Browse, review, and connect with top car sellers near you.</p>
-    <a class="hero-btn" href="#dealers-section" onclick="document.getElementById('dealers-section').scrollIntoView({behavior:'smooth'})">
+    <a class="hero-btn" href="#dealers-section" onclick="document.getElementById('dealers-section').scrollIntoView({behavior:'smooth'}); return false;">
       Browse Dealerships →
     </a>
   </section>
@@ -452,6 +452,17 @@ async function loadDealers(state) {
   errEl.style.display = 'none';
   loading.style.display = 'block';
 
+  // ── Use pre-loaded data for initial "All" load (no fetch needed) ──
+  if ((!state || state === 'All') && window._PRELOADED_DEALERS && window._PRELOADED_DEALERS.length) {
+    const dealers = window._PRELOADED_DEALERS;
+    window._lastDealers = dealers;
+    loading.style.display = 'none';
+    count.textContent = `${dealers.length} dealership${dealers.length !== 1 ? 's' : ''} found`;
+    renderDealers(dealers);
+    return;
+  }
+
+  // ── For state filter or fallback, fetch from API ──
   const url = (state && state !== 'All')
     ? `/djangoapp/get_dealers/${encodeURIComponent(state)}`
     : '/djangoapp/get_dealers';
@@ -466,8 +477,16 @@ async function loadDealers(state) {
     renderDealers(dealers);
   } catch (err) {
     loading.style.display = 'none';
-    errEl.textContent = 'Could not load dealers. Make sure the Node.js service is running.';
-    errEl.style.display = 'block';
+    // Last resort: show preloaded data even if filtered fetch fails
+    if (window._PRELOADED_DEALERS && window._PRELOADED_DEALERS.length) {
+      const dealers = window._PRELOADED_DEALERS;
+      window._lastDealers = dealers;
+      count.textContent = `${dealers.length} dealership${dealers.length !== 1 ? 's' : ''} found`;
+      renderDealers(dealers);
+    } else {
+      errEl.textContent = 'Could not load dealers. Please refresh the page.';
+      errEl.style.display = 'block';
+    }
   }
 }
 
